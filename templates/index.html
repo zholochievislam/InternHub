@@ -1,1 +1,516 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>InternHub — Вакансии и Стажировки СНГ</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-dark: #121417;
+            --card-bg: #1e2228;
+            --card-border: #2e3440;
+            --accent-yellow: #f39c12;
+            --accent-gold: #e67e22;
+            --accent-light: #f1c40f;
+            --text-main: #e2e8f0;
+            --text-muted: #94a3b8;
+            --input-bg: #181b20;
+        }
 
+        body {
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            margin: 0;
+            padding: 40px 20px;
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1050px;
+            margin: 0 auto;
+            background: #181b20;
+            padding: 35px;
+            border-radius: 16px;
+            border: 1px solid var(--card-border);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+        }
+
+        .header-title {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 30px;
+            border-bottom: 1px solid var(--card-border);
+            padding-bottom: 20px;
+        }
+
+        h1 {
+            margin: 0;
+            font-size: 26px;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+            color: #ffffff;
+        }
+
+        h1 span {
+            color: var(--accent-yellow);
+        }
+
+        /* Блок загрузки PDF-резюме */
+        .resume-upload-box {
+            background: linear-gradient(135deg, #1e232a 0%, #171a1f 100%);
+            border: 1.5px dashed var(--accent-yellow);
+            padding: 24px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+            text-align: center;
+            position: relative;
+        }
+
+        .resume-upload-box h3 {
+            margin: 0 0 6px 0;
+            color: var(--accent-yellow);
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .resume-upload-box p {
+            margin: 0 0 16px 0;
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        .resume-upload-box form {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .file-input-wrapper input[type="file"] {
+            color: var(--text-muted);
+            font-size: 13px;
+        }
+
+        .btn-upload {
+            background: linear-gradient(135deg, var(--accent-yellow), var(--accent-gold));
+            color: #000;
+            border: none;
+            padding: 11px 22px;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 13px;
+            cursor: pointer;
+            transition: transform 0.2s, opacity 0.2s;
+        }
+
+        .btn-upload:hover {
+            opacity: 0.9;
+            transform: translateY(-1px);
+        }
+
+        .resume-info {
+            background: rgba(243, 156, 18, 0.1);
+            border: 1px solid rgba(243, 156, 18, 0.3);
+            color: var(--text-main);
+            padding: 12px 16px;
+            border-radius: 8px;
+            margin-top: 16px;
+            font-size: 13px;
+            text-align: left;
+        }
+
+        /* Форма фильтров */
+        .search-form {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            align-items: flex-start;
+        }
+
+        .search-form input[type="text"], 
+        .search-form select, 
+        .dropdown-btn {
+            background-color: var(--input-bg);
+            color: var(--text-main);
+            border: 1px solid var(--card-border);
+            padding: 12px 14px;
+            font-size: 14px;
+            border-radius: 8px;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        .search-form input[type="text"]:focus, 
+        .search-form select:focus, 
+        .dropdown-btn:focus {
+            border-color: var(--accent-yellow);
+        }
+
+        .search-form input[type="text"] { flex: 2; min-width: 220px; }
+        .search-form select { flex: 1; min-width: 170px; cursor: pointer; }
+
+        .btn-search {
+            background-color: var(--card-bg);
+            color: var(--accent-yellow);
+            border: 1px solid var(--accent-yellow);
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .btn-search:hover {
+            background-color: var(--accent-yellow);
+            color: #000;
+        }
+
+        .reset-link {
+            text-decoration: none;
+            color: var(--text-muted);
+            font-size: 13px;
+            align-self: center;
+            margin-left: 5px;
+            transition: color 0.2s;
+        }
+
+        .reset-link:hover {
+            color: var(--accent-yellow);
+        }
+
+        /* Выпадающий список навыков */
+        .dropdown-skills { position: relative; flex: 1; min-width: 180px; }
+        .dropdown-btn { width: 100%; text-align: left; cursor: pointer; box-sizing: border-box; }
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            background-color: #1c2026;
+            min-width: 250px;
+            max-height: 260px;
+            overflow-y: auto;
+            border: 1px solid var(--card-border);
+            border-radius: 8px;
+            box-shadow: 0px 10px 25px rgba(0,0,0,0.6);
+            z-index: 100;
+            padding: 12px;
+            margin-top: 5px;
+        }
+
+        .dropdown-content label {
+            display: flex;
+            align-items: center;
+            padding: 6px 0;
+            font-size: 13px;
+            color: var(--text-main);
+            cursor: pointer;
+        }
+
+        .dropdown-content input[type="checkbox"] {
+            accent-color: var(--accent-yellow);
+            margin-right: 10px;
+        }
+
+        /* Карточка вакансии */
+        .results-header {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: var(--text-muted);
+        }
+
+        .card {
+            position: relative;
+            background-color: var(--card-bg);
+            border: 1px solid var(--card-border);
+            padding: 24px;
+            margin-bottom: 18px;
+            border-radius: 12px;
+            transition: border-color 0.2s, transform 0.2s;
+        }
+
+        .card:hover {
+            border-color: rgba(243, 156, 18, 0.5);
+            transform: translateY(-2px);
+        }
+
+        .card h3 {
+            margin: 0 0 10px 0;
+            color: #ffffff;
+            font-size: 20px;
+            font-weight: 600;
+            padding-right: 140px;
+        }
+
+        .card p {
+            margin: 6px 0;
+            color: var(--text-muted);
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        .card p strong {
+            color: var(--text-main);
+        }
+
+        /* Плашка соответствия */
+        .match-badge {
+            position: absolute;
+            top: 24px;
+            right: 24px;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-weight: 700;
+            font-size: 12px;
+            letter-spacing: 0.3px;
+        }
+
+        .match-high {
+            background-color: rgba(243, 156, 18, 0.15);
+            color: var(--accent-yellow);
+            border: 1px solid var(--accent-yellow);
+        }
+
+        .match-medium {
+            background-color: rgba(230, 126, 34, 0.15);
+            color: #e67e22;
+            border: 1px solid #e67e22;
+        }
+
+        .match-low {
+            background-color: rgba(148, 163, 184, 0.1);
+            color: var(--text-muted);
+            border: 1px solid var(--card-border);
+        }
+
+        /* Теги */
+        .tag {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--card-border);
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 500;
+            color: var(--text-main);
+            display: inline-block;
+            margin-right: 6px;
+            margin-top: 10px;
+        }
+
+        .tag-skills {
+            border-color: rgba(243, 156, 18, 0.3);
+            color: var(--accent-light);
+        }
+
+        .why-fits {
+            background-color: rgba(255, 255, 255, 0.03);
+            border-left: 3px solid var(--accent-yellow);
+            padding: 10px 14px;
+            font-size: 13px;
+            color: var(--text-muted);
+            margin-top: 14px;
+            border-radius: 0 6px 6px 0;
+        }
+
+        .btn-apply {
+            display: inline-block;
+            margin-top: 16px;
+            padding: 10px 20px;
+            background: linear-gradient(135deg, var(--accent-yellow), var(--accent-gold));
+            color: #000;
+            text-decoration: none;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 700;
+            transition: opacity 0.2s;
+        }
+
+        .btn-apply:hover {
+            opacity: 0.9;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header-title">
+        <h1>🎓 InternHub <span>SNG</span></h1>
+    </div>
+
+    <!-- 📄 БЛОК ЗАГРУЗКИ PDF-РЕЗЮМЕ -->
+    <div class="resume-upload-box">
+        <h3>📄 Авто-подбор по вашем резюме (PDF)</h3>
+        <p>Загрузите файл резюме — система моментально сопоставит навыки и покажет % соответствия</p>
+        
+        <form action="/" method="POST" enctype="multipart/form-data">
+            <div class="file-input-wrapper">
+                <input type="file" name="resume" accept=".pdf" required>
+            </div>
+            <button type="submit" class="btn-upload">Загрузить и рассчитать %</button>
+        </form>
+
+        {% if resume_filename %}
+            <div class="resume-info">
+                ✅ <strong>Файл загружен:</strong> {{ resume_filename }}<br>
+                🔍 <strong>Распознанные навыки:</strong> 
+                {% if resume_extracted_skills %}
+                    <span style="color: var(--accent-yellow);">{{ resume_extracted_skills | join(', ') }}</span>
+                {% else %}
+                    Навыки не найдены автоматически (выберите их вручную ниже)
+                {% endif %}
+            </div>
+        {% endif %}
+    </div>
+
+    <!-- 🔍 ФОРМА ФИЛЬТРОВ И ПОИСКА -->
+    <form class="search-form" method="GET" action="/" id="filterForm">
+        <input type="text" name="query" placeholder="Поиск по названию, компании или городу..." value="{{ query }}">
+        
+        <!-- 1. Выбор специальности -->
+        <select name="field" id="fieldSelect" onchange="updateSkills()">
+            <option value="">Все специальности</option>
+            {% for field in fields %}
+                <option value="{{ field }}" {% if selected_field == field %}selected{% endif %}>{{ field }}</option>
+            {% endfor %}
+        </select>
+
+        <!-- 2. Выбор навыков -->
+        <div class="dropdown-skills">
+            <button type="button" class="dropdown-btn" id="skillsBtn" onclick="toggleSkillsDropdown()">
+                Навыки (до 7): <span id="selectedCount" style="color: var(--accent-yellow); font-weight: bold;">0</span>
+            </button>
+            <div class="dropdown-content" id="skillsDropdown"></div>
+        </div>
+
+        <!-- 3. Выбор формата работы -->
+        <select name="format">
+            <option value="">Все форматы</option>
+            {% for fmt in formats %}
+                <option value="{{ fmt }}" {% if selected_format == fmt %}selected{% endif %}>{{ fmt }}</option>
+            {% endfor %}
+        </select>
+
+        <button type="submit" class="btn-search">Найти</button>
+        <a href="/" class="reset-link">Сбросить</a>
+    </form>
+
+    <div class="results-header">Найдено вакансий: {{ internships|length }}</div>
+
+    {% if internships %}
+        {% for item in internships %}
+            <div class="card">
+                <!-- Плашка процента совпадения -->
+                {% if item.match_score >= 70 %}
+                    <div class="match-badge match-high">🎯 {{ item.match_score }}% match</div>
+                {% elif item.match_score >= 40 %}
+                    <div class="match-badge match-medium">⚡ {{ item.match_score }}% match</div>
+                {% else %}
+                    <div class="match-badge match-low">⚪ {{ item.match_score }}% match</div>
+                {% endif %}
+
+                <h3>{{ item.title }}</h3>
+                <p><strong>🏢 Компания:</strong> {{ item.company }} &nbsp;|&nbsp; <strong>📍 Город:</strong> {{ item.city }}</p>
+                <p><strong>💰 Зарплата:</strong> {{ item.salary }} &nbsp;|&nbsp; <strong>⏳ Опыт:</strong> {{ item.experience }}</p>
+                
+                {% if item.why_fits and item.why_fits != 'Не указано' %}
+                    <div class="why-fits">💡 <strong>Почему подходит:</strong> {{ item.why_fits }}</div>
+                {% endif %}
+
+                <p>
+                    <span class="tag">{{ item.field }}</span>
+                    <span class="tag">Формат: {{ item.format }}</span>
+                    {% if item.skills and item.skills != 'Не указано' %}
+                        <span class="tag tag-skills">🛠 {{ item.skills }}</span>
+                    {% endif %}
+                </p>
+
+                {% if item.link and item.link != '#' and item.link != 'Не указано' %}
+                    <a href="{{ item.link }}" target="_blank" class="btn-apply">Откликнуться ↗</a>
+                {% endif %}
+            </div>
+        {% endfor %}
+    {% else %}
+        <p style="color: var(--text-muted);">Ничего не найдено по вашему запросу.</p>
+    {% endif %}
+</div>
+
+<script>
+    const specialtySkills = {{ specialty_skills | tojson }};
+    const selectedSkillsFromBackend = {{ selected_skills | tojson }};
+
+    function toggleSkillsDropdown() {
+        const content = document.getElementById("skillsDropdown");
+        content.style.display = content.style.display === "block" ? "none" : "block";
+    }
+
+    document.addEventListener("click", function(event) {
+        const dropdown = document.querySelector(".dropdown-skills");
+        if (!dropdown.contains(event.target)) {
+            document.getElementById("skillsDropdown").style.display = "none";
+        }
+    });
+
+    function handleCheckboxChange(cb) {
+        const checkboxes = document.querySelectorAll('#skillsDropdown input[type="checkbox"]:checked');
+        if (checkboxes.length > 7) {
+            cb.checked = false;
+            alert("Можно выбрать не более 7 навыков!");
+            return;
+        }
+        document.getElementById("selectedCount").textContent = checkboxes.length;
+    }
+
+    function updateSkills() {
+        const fieldSelect = document.getElementById("fieldSelect");
+        const container = document.getElementById("skillsDropdown");
+        const selectedField = fieldSelect.value;
+
+        container.innerHTML = "";
+
+        let skillsToDisplay = [];
+        if (selectedField && specialtySkills[selectedField]) {
+            skillsToDisplay = specialtySkills[selectedField];
+        } else {
+            let allSkills = new Set();
+            Object.values(specialtySkills).forEach(arr => {
+                arr.forEach(s => allSkills.add(s));
+            });
+            skillsToDisplay = Array.from(allSkills).sort();
+        }
+
+        skillsToDisplay.forEach(skill => {
+            const label = document.createElement("label");
+            const checkbox = document.createElement("input");
+            checkbox.type = "checkbox";
+            checkbox.name = "skills";
+            checkbox.value = skill;
+
+            if (selectedSkillsFromBackend.includes(skill)) {
+                checkbox.checked = true;
+            }
+
+            checkbox.onchange = function() { handleCheckboxChange(this); };
+
+            label.appendChild(checkbox);
+            label.appendChild(document.createTextNode(" " + skill));
+            container.appendChild(label);
+        });
+
+        const initialChecked = document.querySelectorAll('#skillsDropdown input[type="checkbox"]:checked').length;
+        document.getElementById("selectedCount").textContent = initialChecked;
+    }
+
+    window.onload = function() {
+        updateSkills();
+    };
+</script>
+
+</body>
+</html>
